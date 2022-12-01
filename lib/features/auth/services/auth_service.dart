@@ -4,7 +4,6 @@ import 'package:amazon_clone/common/widgets/bottom_bar.dart';
 import 'package:amazon_clone/constants/error_handling.dart';
 import 'package:amazon_clone/constants/global_variables.dart';
 import 'package:amazon_clone/constants/utils.dart';
-import 'package:amazon_clone/features/home/home_screen.dart';
 import "package:amazon_clone/models/user.dart";
 import 'package:amazon_clone/providers/user_provider.dart';
 import 'package:flutter/material.dart';
@@ -29,6 +28,7 @@ class AuthService {
         address: '',
         type: '',
         token: '',
+        cart: [],
       );
 
       http.Response res = await http.post(
@@ -71,7 +71,6 @@ class AuthService {
           'Content-Type': 'application/json; charset=UTF-8',
         },
       );
-
       httpErrorHandle(
         response: res,
         context: context,
@@ -93,34 +92,35 @@ class AuthService {
     }
   }
 
-  // get user data
-  void getUserData({
-    required BuildContext context,
-  }) async {
+  void getUserData(
+    BuildContext context,
+  ) async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('x-auth-token');
 
       if (token == null) {
-        prefs.setString("x-auth-token", "");
+        prefs.setString('x-auth-token', '');
       }
 
       var tokenRes = await http.post(
         Uri.parse('$uri/tokenIsValid'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
-          'x-auth-token': token!,
+          'x-auth-token': token!
         },
       );
 
       var response = jsonDecode(tokenRes.body);
 
       if (response == true) {
-        http.Response userRes =
-            await http.get(Uri.parse('$uri/'), headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-          'x-auth-token': token,
-        });
+        http.Response userRes = await http.get(
+          Uri.parse('$uri/'),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+            'x-auth-token': token
+          },
+        );
 
         // ignore: use_build_context_synchronously
         var userProvider = Provider.of<UserProvider>(context, listen: false);

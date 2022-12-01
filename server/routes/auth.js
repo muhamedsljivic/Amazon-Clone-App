@@ -29,13 +29,8 @@ authRouter.post("/api/signup", async (req, res) => {
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
-
-  // post that data in database
-  // return that data to the user
 });
 
-// Sign In Route
-// Exercise
 authRouter.post("/api/signin", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -76,7 +71,6 @@ authRouter.post("/tokenIsValid", async (req, res) => {
   }
 });
 
-// get user data
 authRouter.get("/", auth, async (req, res) => {
   const user = await User.findById(req.user);
   res.json({ ...user._doc, token: req.token });
